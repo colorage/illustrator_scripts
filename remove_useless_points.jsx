@@ -84,7 +84,7 @@ function isOnLine(pathPoint, pathPoint_next, pathPoint_prev){
     var y2 = pathPoint_prev.anchor[1];
     var d1 = distance (x1, y1, x2, y2);
     var d2 = distance (x, y, x1, y1)+distance (x, y, x2, y2);
-    if (Math.abs (d2-d1)<=d1*0.01){
+    if (Math.abs (d2-d1)==0){
         return true;
     }
     else {
