@@ -7,3 +7,4 @@ Sometimes with inaccurate use of "Direct selection tool" and delete button you c
 # Remove useless points
 ### [remove_useless_points.jsx](https://github.com/colorage/illustrator_scripts/blob/master/remove_useless_points.jsx)
 Remove point from straight sides of paths (both closed and opened).
+![It works](http://s32.postimg.org/hq9mdwwjp/remove_dots.gif)
