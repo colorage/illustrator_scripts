@@ -1,6 +1,8 @@
 var myDoc = app.activeDocument;
 var length = myDoc.pathItems.length;
 var count = 0;
+var fault_depth = 0.01;
+
 for (var i=0; i<length; i++){
    if (isShape (myDoc.pathItems[i]) && myDoc.pathItems[i].closed && myDoc.pathItems[i].editable){
     var pointsLength= myDoc.pathItems[i].pathPoints.length;
@@ -84,7 +86,7 @@ function isOnLine(pathPoint, pathPoint_next, pathPoint_prev){
     var y2 = pathPoint_prev.anchor[1];
     var d1 = distance (x1, y1, x2, y2);
     var d2 = distance (x, y, x1, y1)+distance (x, y, x2, y2);
-    if (Math.abs (d2-d1)==0){
+    if (Math.abs (d2-d1)<fault_depth){
         return true;
     }
     else {
