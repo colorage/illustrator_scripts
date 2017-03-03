@@ -12,4 +12,4 @@ Remove point from straight sides of paths (both closed and opened).
 ### [export_symbols.jsx](https://github.com/colorage/illustrator_scripts/blob/master/export_symbols.jsx)
 Export all symbols from document except starting with "_". "_symbolName" will not be exported.
 By default script generates @1x, @2x, @3x pictures.
-(https://s28.postimg.org/7y1wz6wot/Capture.png)
+![Default folders](https://s28.postimg.org/7y1wz6wot/Capture.png)
