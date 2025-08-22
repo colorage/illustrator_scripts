@@ -2,9 +2,10 @@ var myDoc = app.activeDocument;
 var length = myDoc.pathItems.length;
 var count = 0;
 var fault_depth = 0.01;
+var handle_tolerance = 0.01;
 
 for (var i=0; i<length; i++){
-   if (isShape (myDoc.pathItems[i]) && myDoc.pathItems[i].closed && myDoc.pathItems[i].editable){
+   if (isShape (myDoc.pathItems[i]) && myDoc.pathItems[i].closed && myDoc.pathItems[i].editable && !myDoc.pathItems[i].locked && !myDoc.pathItems[i].hidden){
     var pointsLength= myDoc.pathItems[i].pathPoints.length;
     var myPathPoints = myDoc.pathItems[i].pathPoints;
         for(var j=0;j<pointsLength;j++){
@@ -17,7 +18,7 @@ for (var i=0; i<length; i++){
             if (dot_next == pointsLength){
                 dot_next = 0;
             }
-            if (isOnLine (myPathPoints[dot], myPathPoints[dot_next], myPathPoints[dot_prev])){
+            if (isOnLine (myPathPoints[dot], myPathPoints[dot_next], myPathPoints[dot_prev]) && handlesAlignedOrZero(myPathPoints[dot], myPathPoints[dot_prev], myPathPoints[dot_next])){
                 myPathPoints[dot].remove();
                 ++count;
                 --pointsLength;
@@ -26,20 +27,14 @@ for (var i=0; i<length; i++){
         }
    }
     // for open path
-    if (isShape (myDoc.pathItems[i]) && !myDoc.pathItems[i].closed && myDoc.pathItems[i].editable){
+    if (isShape (myDoc.pathItems[i]) && !myDoc.pathItems[i].closed && myDoc.pathItems[i].editable && !myDoc.pathItems[i].locked && !myDoc.pathItems[i].hidden){
     var pointsLength= myDoc.pathItems[i].pathPoints.length;
     var myPathPoints = myDoc.pathItems[i].pathPoints;
         for(var j=1;j<pointsLength-1;j++){
             var dot = j;
             var dot_prev = dot -1;
             var dot_next = dot+1;
-            if (dot_prev == -1){
-                dot_prev = pointsLength -1;
-            }
-            if (dot_next == pointsLength){
-                dot_next = 0;
-            }
-            if (isOnLine (myPathPoints[dot], myPathPoints[dot_next], myPathPoints[dot_prev])){
+            if (isOnLine (myPathPoints[dot], myPathPoints[dot_next], myPathPoints[dot_prev]) && handlesAlignedOrZero(myPathPoints[dot], myPathPoints[dot_prev], myPathPoints[dot_next])){
                 myPathPoints[dot].remove();
                 ++count;
                 --pointsLength;
@@ -92,6 +87,28 @@ function isOnLine(pathPoint, pathPoint_next, pathPoint_prev){
     else {
         return false;
     }
+}
+
+function handlesAlignedOrZero(pathPoint, pathPoint_prev, pathPoint_next){
+    var ax = pathPoint.anchor[0];
+    var ay = pathPoint.anchor[1];
+    var lx = pathPoint.leftDirection[0] - ax;
+    var ly = pathPoint.leftDirection[1] - ay;
+    var rx = pathPoint.rightDirection[0] - ax;
+    var ry = pathPoint.rightDirection[1] - ay;
+
+    var vx = pathPoint_next.anchor[0] - pathPoint_prev.anchor[0];
+    var vy = pathPoint_next.anchor[1] - pathPoint_prev.anchor[1];
+
+    var handlesZero = (Math.abs(lx) < handle_tolerance && Math.abs(ly) < handle_tolerance && Math.abs(rx) < handle_tolerance && Math.abs(ry) < handle_tolerance);
+    if (handlesZero){
+        return true;
+    }
+
+    var crossL = Math.abs(lx * vy - ly * vx);
+    var crossR = Math.abs(rx * vy - ry * vx);
+
+    return (crossL < handle_tolerance && crossR < handle_tolerance);
 }
 
 function distance(x1,y1, x2, y2){
